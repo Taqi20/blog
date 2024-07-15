@@ -153,7 +153,7 @@ blogRouter.get('/:id', async (c) => {
         })
 
         return c.json({
-            id: blog
+            blog
         })
     } catch (e) {
         c.status(404);
