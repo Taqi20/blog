@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useBlog } from "../hooks"
 import { CompleteBlog } from "../components/CompleteBlog";
 import { AppBar } from "../components/AppBar";
+import { PostSkeleton } from "../components/PostSkeleton";
 
 export const Blog = () => {
     const { id } = useParams();
@@ -11,7 +12,7 @@ export const Blog = () => {
     if (loading || !blog) {
         return <div>
             <AppBar />
-            loading...
+            <PostSkeleton />
         </div>
     }
 
