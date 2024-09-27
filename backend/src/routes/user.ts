@@ -78,6 +78,6 @@ userRouter.post('/signin', async (c) => {
         return c.text(token)
     } catch (e) {
         c.status(403);
-        return c.json({ error: "error while signing up" });
+        return c.json({ error: "error while signing in" });
     }
 })
