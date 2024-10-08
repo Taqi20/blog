@@ -8,7 +8,7 @@ export const AppBar = () => {
 
     const handleSignOut = () => {
         // Clear user data from local storage or cookies
-        localStorage.removeItem('userToken');
+        localStorage.removeItem('token');
 
         // Redirect to the login page
         navigate('/signin');
