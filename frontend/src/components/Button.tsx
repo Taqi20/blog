@@ -3,10 +3,10 @@ import clsx from 'clsx';
 
 type ButtonProps = {
     children: React.ReactNode;
-    variant?: 'primary' | 'outline' | 'ghost'; // Define allowed variants
-    size?: 'sm' | 'md' | 'lg';                 // Define allowed sizes
-    className?: string;                        // Optional custom class
-} & React.ButtonHTMLAttributes<HTMLButtonElement>; // Extend default button props
+    variant?: 'primary' | 'outline' | 'ghost';
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button: React.FC<ButtonProps> = ({
     children,
@@ -25,9 +25,9 @@ const Button: React.FC<ButtonProps> = ({
     };
 
     const sizeStyles = {
-        sm: 'px-4 py-2 text-sm',
-        md: 'px-6 py-3 text-md',
-        lg: 'px-8 py-4 text-lg',
+        sm: 'px-4 py-2 text-sm rounded-xl',
+        md: 'px-6 py-3 text-md rounded-2xl',
+        lg: 'px-8 py-4 text-lg rounded-3xl',
     };
 
     return (
