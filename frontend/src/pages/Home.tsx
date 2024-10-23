@@ -94,7 +94,7 @@ export default function LandingPage() {
                                         <h3 className="text-xl font-bold mb-2">Post Title {i}</h3>
                                         <p className="text-gray-500 mb-4">Brief description of the post.</p>
                                         <Link
-                                            to={`/post/${i}`}
+                                            to={`/blog/${i}`}
                                             className="text-gray-900 hover:text-gray-600 font-medium"
                                         >
                                             Read More →

@@ -6,12 +6,14 @@ export const AppBar = () => {
 
     const navigate = useNavigate();
 
+    const userToken = localStorage.getItem('token');
+
     const handleSignOut = () => {
         // Clear user data from local storage or cookies
         localStorage.removeItem('token');
 
         // Redirect to the login page
-        navigate('/signin');
+        navigate('/');
     };
 
     return <div className="border-b flex justify-between px-10 py-4">

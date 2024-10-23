@@ -2,7 +2,11 @@ import { Blog } from "../hooks"
 import { AppBar } from "./AppBar"
 import { Avatar } from "./BlogCard"
 
+import { BlogComponent } from "../pages/Delete"
 export const CompleteBlog = ({ blog }: { blog: Blog }) => {
+
+    // const { Id } = useParams<{ Id: string }>();
+
     return <div>
         <AppBar />
         <div className="flex justify-center">
@@ -18,6 +22,7 @@ export const CompleteBlog = ({ blog }: { blog: Blog }) => {
                     <div>
                         {blog.content}
                     </div>
+                    <BlogComponent blogId={blog.id} authorId={blog.author.name}></BlogComponent>
                 </div>
                 <div className="col-span-2">
                     <div className="text-slate-600 text-lg">

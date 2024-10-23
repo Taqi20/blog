@@ -2,12 +2,14 @@ import axios from "axios"
 import { BACKEND_URL } from "../config"
 import { ChangeEvent, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { AppBar } from "../components/AppBar";
 
 export const Publish = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const navigate = useNavigate();
     return <div>
+        <AppBar />
         <div className="flex flex-col justify-center gap-4 w-full max-w-2xl mx-auto mt-3">
             <div className="relative w-full">
                 <textarea onChange={(e) => {

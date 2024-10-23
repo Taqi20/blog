@@ -21,8 +21,8 @@ export const CreativeHero = () => {
                     transition={{ duration: 1, delay: 0.5 }}
                     className="text-center z-10"
                 >
-                    <h1 className="text-6xl font-bold mb-4">Welcome to Madhyam</h1>
-                    <p className="text-xl text-gray-600 mb-8">
+                    <h1 className="text-6xl font-bold mb-8">Welcome to Madhyam</h1>
+                    <p className="text-xl text-gray-600 mb-16">
                         Redefining the platform of digital storytelling
                     </p>
                     <div className="space-x-4">

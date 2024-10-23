@@ -6,19 +6,36 @@ import { BACKEND_URL } from "../config"
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [emailError, setEmailError] = useState("");
     const [postInputs, setPostInputs] = useState<SignupInput>({
         name: "",
         email: "",
         password: ""
     })
 
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
     async function sendRequest() {
+
+        if (!validateEmail(postInputs.email)) {
+            setEmailError("Please Enter a Valid Email Address");
+            return;
+        }
         try {
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
-            const jwt = response.data;
-            localStorage.setItem("token", jwt);
-            navigate('/blogs')
+            const jwt = response.data.jwt;
+            const id = response.data.user.id;
+            if (jwt) {
+                localStorage.setItem("token", jwt);
+                localStorage.setItem("user", id);
+                navigate('/blogs')
+            } else {
+                console.error("No token received in response");
+            }
         } catch (e) {
             alert(`Error while ${type === "signup" ? "signing up" : "signing in"}`);
         }
@@ -50,13 +67,16 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                             name: e.target.value
                         })
                     }} /> : null}
-                    <LabelledInput label="Email" placeholder="name@email.com" onChange={(e) => {
+                    <LabelledInput label="Email" placeholder="name@email.com" onChange={(e: ChangeEvent<HTMLInputElement>) => {
                         setPostInputs({
                             ...postInputs,
                             email: e.target.value
-                        })
+                        });
+                        setEmailError("");
                     }} />
-                    <LabelledInput label="Password" type={"password"} placeholder="password" onChange={(e) => {
+
+                    {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
+                    <LabelledInput label="Password" type={"password"} placeholder="password" onChange={(e: ChangeEvent<HTMLInputElement>) => {
                         setPostInputs({
                             ...postInputs,
                             password: e.target.value

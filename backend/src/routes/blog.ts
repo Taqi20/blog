@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono"
-import { verify } from "hono/jwt";
+import { verify, decode, sign } from "hono/jwt";
 import { createBlogInput, updateBlogInput } from "@taqi20/blog-common";
 
 export const blogRouter = new Hono<{
@@ -9,6 +9,7 @@ export const blogRouter = new Hono<{
     Bindings: {
         DATABASE_URL: string,
         JWT_SECRET: string
+        params: string
     },
     Variables: {
         userId: string;
@@ -61,7 +62,8 @@ blogRouter.post('/', async (c) => {
         })
 
         return c.json({
-            id: blog.id
+            id: blog.id,
+            user_id: authorId
         })
     } catch (e) {
         c.status(411);
@@ -163,3 +165,66 @@ blogRouter.get('/:id', async (c) => {
     }
 })
 
+blogRouter.delete("/delete/:id", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL
+    }).$extends(withAccelerate())
+
+    const authHeader = c.req.header('Authorization') || '';
+
+    if (!authHeader) {
+        return c.json({
+            msg: "Auth token is missing"
+        });
+    }
+
+    let user;
+
+    try {
+        const decoded = await verify(authHeader, c.env.JWT_SECRET);
+
+        user = decoded.id;
+
+    } catch (error) {
+        return c.json({
+            msg: "Invalid or expired token"
+        })
+    }
+
+    const postId = c.req.param("id");
+    try {
+        //retrieve post to check if the user can delete it 
+        const post = await prisma.post.findUnique({
+            where: {
+                id: postId
+            }
+        })
+
+        if (!post) {
+            return c.json({
+                msg: "Post Not Found"
+            });
+        }
+
+        if (post.authorId !== user) {
+            return c.json({
+                msg: "User is not authorized to delete this post"
+            });
+        }
+
+        await prisma.post.delete({
+            where: {
+                id: postId
+            }
+        });
+
+        return c.json({
+            message: "Successfully deleted blog"
+        })
+    } catch (error) {
+        console.log(error);
+        return c.json({
+            msg: "Failed to delete post"
+        });
+    }
+});

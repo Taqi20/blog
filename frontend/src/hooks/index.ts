@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 export interface Blog {
     "content": string;
     "title": string;
@@ -9,6 +10,8 @@ export interface Blog {
         "name": string
     }
 }
+
+export type BlogArray = Blog[];
 
 export const useBlogs = () => {
     const [loading, setLoading] = useState(true);
@@ -24,6 +27,10 @@ export const useBlogs = () => {
                 setBlogs(response.data.blogs);
                 setLoading(false);
             })
+            .catch(error => {
+                console.error("Failed to fetch blogs: ", error);
+                setLoading(false);
+            });
     }, [])
 
     return {
@@ -52,4 +59,19 @@ export const useBlog = ({ id }: { id: string }) => {
         loading,
         blog
     }
+}
+
+export async function deleteBlog(blogId: string) {
+    const navigate = useNavigate();
+    const token = localStorage.getItem("token");
+    if (!token) {
+        navigate("/signin");
+    }
+    const res = await axios.delete(`${BACKEND_URL}/api/v1/blog/delete/${blogId}`, {
+        headers: {
+            Authorization: token,
+        },
+    });
+
+    return res.data.message;
 }
