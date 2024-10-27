@@ -348,3 +348,85 @@ blogRouter.delete("/:id", async (c) => {
     }
 });
 
+blogRouter.post('/comment/:id', async (c) => {
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const body = await c.req.json();
+        const comment = await prisma.comment.create({
+            data: {
+                name: body.name,
+                content: body.content,
+                post: {
+                    connect: { id: id } //connecting to the post by its id 
+                }
+            }
+        })
+
+        return c.json(
+            comment
+        )
+    } catch (error) {
+        c.status(500)
+        return c.json({
+            error: "Internal server error while commenting 1"
+        })
+    }
+})
+
+blogRouter.get('/comment/new/:id', async (c) => {
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const comment = await prisma.comment.findMany({
+            where: {
+                postId: id
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
+
+        return c.json(
+            comment
+        )
+    } catch (error) {
+        c.status(500)
+        return c.json({
+            error: "Internal server error while commenting 2"
+        })
+    }
+})
+
+blogRouter.get('/comment/old/:id', async (c) => {
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const comment = await prisma.comment.findMany({
+            where: {
+                postId: id
+            },
+            orderBy: {
+                createdAt: 'asc'
+            }
+        })
+
+        return c.json(
+            comment
+        )
+    } catch (error) {
+        c.status(500)
+        return c.json({
+            error: "Internal server error while commenting 2"
+        })
+    }
+})
