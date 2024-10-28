@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-import { verify, decode, sign } from "hono/jwt";
+import { verify } from "hono/jwt";
 import { Prisma, PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { createBlogInput, updateBlogInput } from "@taqi20/blog-common";
@@ -26,8 +26,9 @@ blogRouter.use('/*', async (c, next) => {
 
     }
 
+    const token = authHeader.split(' ')[1];
     try {
-        const payload = await verify(authHeader, c.env.JWT_SECRET)
+        const payload = await verify(token, c.env.JWT_SECRET)
         if (!payload) {
             c.status(401);
             return c.json({ error: "unauthorized 1" })
