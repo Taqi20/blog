@@ -27,15 +27,12 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
         }
         try {
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
-            const jwt = response.data.jwt;
-            const id = response.data.user.id;
-            if (jwt) {
-                localStorage.setItem("token", jwt);
-                localStorage.setItem("user", id);
-                navigate('/blogs')
-            } else {
-                console.error("No token received in response");
-            }
+            const jwt = response.data.token;
+
+            localStorage.setItem("token", `Bearer ` + jwt);
+            const name = response.data.name
+            localStorage.setItem("firstName", name)
+            navigate("/blogs")
         } catch (e) {
             alert(`Error while ${type === "signup" ? "signing up" : "signing in"}`);
         }

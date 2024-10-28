@@ -1,43 +1,80 @@
 import { Link } from "react-router-dom";
+import moment from "moment-timezone"
+import ReactMarkdown from 'react-markdown';
+import { useEffect, useState } from "react"
+import bagde from "../assets/Badge.svg"
+
+
 
 interface BlogCardProps {
-    authorName: string;
-    title: string;
-    content: string;
-    publishedDate: string;
-    id: string;
+    id: string,
+    title: string,
+    description: string,
+    createdAt: Date,
+    author: string,
+    authorId: string
 }
 
 export const BlogCard = ({
     id,
-    authorName,
     title,
-    content,
-    publishedDate
+    description,
+    createdAt,
+    author,
+    authorId
 }: BlogCardProps) => {
-    return <Link to={`/blog/${id}`}>
-        <div className="p-4 border-b border-slate-200 pb-4 w-screen sm:max-w-xl md:max-w-2xl cursor-pointer">
-            <div className="flex pb-2">
-                <div className="flex justify-center flex-col">
-                    <Avatar size="small" name={authorName} />
+
+    const [badge, setBadge] = useState(false)
+    useEffect(() => {
+        if (authorId === "4473868e-b7b4-4df9-bb61-7c17931bdbc2") {
+            setBadge(true);
+        } else {
+            setBadge(false);
+        }
+    }, [author])
+    const createdAtIndiaTime = moment(createdAt).tz('Asia/Kolkata').format('MMMM D, YYYY [at] hh:mm A')
+
+    return (
+        <Link to={`/blog/${id}`} >
+            <div className="flex flex-col gap-2 sm:gap-3 w-full pb-4 border-b items-start justify-start">
+                <div className="flex gap-1 sm:gap-2 items-center w-full">
+                    <div className="flex gap-2 items-center">
+                        <div className="relative w-8 h-8 overflow-hidden bg-gray-100 rounded-full">
+                            <svg className="absolute w-10 h-10 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div>
+                            <p className="text-sm sm:text-lg font-bold">{author}</p>
+                        </div>
+                    </div>
+                    {badge && (
+                        <div className="flex items-center">
+                            <div className="h-4 w-4 pt-0.5">
+                                <img src={bagde} alt="Badge" />
+
+                            </div>
+                        </div>
+                    )}
+                    <p className="font-md text-xs text-slate-600 pt-0.5">{createdAtIndiaTime.toLocaleString()}</p>
                 </div>
-                <div className="font-extralight pl-2 text-sm flex justify-center flex-col"> {authorName}</div>
-                <div className="flex justify-center flex-col pl-2">
-                    <Circle />
+                <div>
+                    <p className="font-bold text-xl sm:text-3xl">{title.length > 100 ? title.slice(0, 100) + "..." : title}</p>
                 </div>
-                <div className="font-thin pl-2 text-slate-400 text-sm flex justify-center flex-col">
-                    {publishedDate}
+                <div>
+                    <ReactMarkdown className="text-slate-500 text-xs sm:text-md">{description.length > 200 ? description.slice(0, 200) + "..." : description}</ReactMarkdown>
+                </div>
+                <div>
+                    <div className="text-xs sm:text-sm opacity-80 w-fit rounded">
+                        <span className="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded me-2 shadow-md shadow-gray-200 gap-1">
+                            <svg className="w-2 sm:w-3 h-2 sm:h-3  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
+                            </svg>
+                            {`${Math.ceil(description.length / 400)} minute(s) read`}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div className="text-xl font-semibold">
-                {title}
-            </div>
-            <div className="text-md font-thin">
-                {content.slice(0, 50) + "..."}
-            </div>
-            <div className="text-slate-500 text-sm font-thin pt-4">{Math.ceil(content.length / 100)} minutes read</div>
-        </div>
-    </Link>
+        </Link>
+    )
 }
 
 export function Circle() {

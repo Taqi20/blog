@@ -2,36 +2,60 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
-export interface Blog {
-    "content": string;
-    "title": string;
-    "id": number;
-    "author": {
-        "name": string
-    }
+
+interface blogs {
+    id: string,
+    title: string,
+    content: string,
+    author: {
+        id: string,
+        name: string
+    },
+    createdAt: Date
 }
 
-export type BlogArray = Blog[];
 
-export const useBlogs = () => {
+interface blog {
+    id: string,
+    title: string,
+    content: string,
+    author: {
+        name: string
+    },
+    comments: {
+        id: string,
+        name: string,
+        content: string,
+        createdAt: Date
+    }[],
+    createdAt: Date
+}
+
+export const useBlogs = (reference: string, refreshKey?: string) => {
     const [loading, setLoading] = useState(true);
-    const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [blogs, setBlogs] = useState<blogs[]>([]);
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
+        const token = localStorage.getItem('token');
+        console.log("Token:", token); // Check if token exists
+        axios.get(`${BACKEND_URL}/api/v1/blog/${reference}`, {
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: token
             }
         })
             .then(response => {
-                setBlogs(response.data.blogs);
+                console.log("Raw API Response:", response.data); // Log full response
+                console.log("Blogs array:", response.data.posts); // Log blogs array
+                setBlogs(response.data.posts);
                 setLoading(false);
             })
             .catch(error => {
-                console.error("Failed to fetch blogs: ", error);
+                console.error("Status:", error.response?.status);
+    console.error("Headers:", error.response?.headers);
+    console.error("Data:", error.response?.data);
                 setLoading(false);
             });
-    }, [])
+    }, [refreshKey])
 
     return {
         loading,
@@ -41,16 +65,17 @@ export const useBlogs = () => {
 
 export const useBlog = ({ id }: { id: string }) => {
     const [loading, setLoading] = useState(true);
-    const [blog, setBlog] = useState<Blog>();
+    const [blog, setBlog] = useState<blog>();
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
         axios.get(`${BACKEND_URL}/api/v1/blog/${id}`, {
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: token
             }
         })
             .then(response => {
-                setBlog(response.data.blog);
+                setBlog(response.data);
                 setLoading(false);
             })
     }, [id])
