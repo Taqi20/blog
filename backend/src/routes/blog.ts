@@ -77,43 +77,12 @@ blogRouter.post('/', async (c) => {
             id: post.id
         })
     } catch (err) {
+        console.log(err)
         c.status(500)
         return c.json({
             error: "server error"
         })
     }
-
-
-    // const body = await c.req.json();
-    // const { success } = createBlogInput.safeParse(body);
-    // if (!success) {
-    //     c.status(411);
-    //     return c.json({
-    //         message: "Inputs are not correct"
-    //     })
-    // }
-
-    // const authorId = c.get("userId");
-
-    // try {
-    //     const blog = await prisma.blog.create({
-    //         data: {
-    //             title: body.title,
-    //             content: body.content,
-    //             authorId: authorId
-    //         }
-    //     })
-
-    //     return c.json({
-    //         id: blog.id,
-    //         user_id: authorId
-    //     })
-    // } catch (e) {
-    //     c.status(411);
-    //     return c.json({
-    //         message: "error"
-    //     })
-    // }
 })
 
 blogRouter.put('/', async (c) => {
@@ -144,19 +113,6 @@ blogRouter.put('/', async (c) => {
             }
         })
 
-        // const blog = await prisma.blog.update({
-        //     where: {
-        //         id: body.id
-        //     },
-        //     data: {
-        //         title: body.title,
-        //         content: body.content
-        //     }
-        // })
-
-        // return c.json({
-        //     id: blog.id
-        // })
     } catch (e) {
         c.status(500);
         return c.json({
@@ -170,23 +126,6 @@ blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-
-    // const blogs = await prisma.blog.findMany({
-    //     select: {
-    //         content: true,
-    //         title: true,
-    //         id: true,
-    //         author: {
-    //             select: {
-    //                 name: true
-    //             }
-    //         }
-    //     }
-    // });
-
-    // return c.json({
-    //     blogs
-    // })
 
 
     try {
@@ -212,6 +151,7 @@ blogRouter.get('/bulk', async (c) => {
             posts
         })
     } catch (error) {
+        console.log(error);
         c.status(500)
         return c.json({
             error: "Not Found Such Post"
@@ -266,26 +206,6 @@ blogRouter.get('/:id', async (c) => {
     }).$extends(withAccelerate())
 
     try {
-        // const blog = await prisma.blog.findFirst({
-        //     where: {
-        //         id: Number(id)
-        //     },
-        //     select: {
-        //         id: true,
-        //         title: true,
-        //         content: true,
-        //         author: {
-        //             select: {
-        //                 name: true
-        //             }
-        //         }
-        //     }
-        // })
-
-        // return c.json({
-        //     blog
-        // })
-
         const post = await prisma.post.findUnique({
             where: {
                 id
@@ -319,6 +239,7 @@ blogRouter.get('/:id', async (c) => {
         )
 
     } catch (e) {
+        console.log(e);
         c.status(505);
         return c.json({
             message: "Error while fetching blog post "
